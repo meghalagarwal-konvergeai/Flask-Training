@@ -11,7 +11,7 @@ db = SQLAlchemy(app)
 class Todo(db.Model):
     sno = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    desc = db.Column(db.String(500), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -22,11 +22,11 @@ def home():
     if request.method == "POST":
         title = request.form["title"]
         desc = request.form["desc"]
-        todo = Todo(title=title, desc=desc)
+        todo = Todo(title=title, description=desc)
         db.session.add(todo)
         db.session.commit()
-    allTodo = Todo.query.all()
-    return render_template('index.html', alltodo=allTodo)
+    allTodos = Todo.query.all()
+    return render_template('index.html', alltodo=allTodos)
 
 if __name__ == "__main__":
     app.run(debug=True)
