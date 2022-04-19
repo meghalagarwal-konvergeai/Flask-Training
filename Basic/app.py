@@ -1,5 +1,4 @@
-from turtle import title
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -27,6 +26,27 @@ def home():
         db.session.commit()
     allTodos = Todo.query.all()
     return render_template('index.html', alltodo=allTodos)
+
+@app.route("/update/<int:sno>", methods=["GET", "POST"])
+def update(sno):
+    if request.method == "POST":
+        title = request.form["title"]
+        desc = request.form["desc"]        
+        new_todo = Todo.query.filter_by(sno=sno).first()
+        new_todo.title = title
+        new_todo.description = desc
+        db.session.add(new_todo)
+        db.session.commit()
+        return redirect("/")
+    update_todo = Todo.query.filter_by(sno=sno).first()
+    return render_template("update.html", update_todo=update_todo)
+
+@app.route("/delete/<int:sno>")
+def delete(sno):
+    delete_todo = Todo.query.filter_by(sno=sno).first()
+    db.session.delete(delete_todo)
+    db.session.commit()
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
